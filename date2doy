@@ -1,0 +1,71 @@
+#!/usr/bin/env python3
+__doc__ ='''
+Converts an input string 'YYYY-MM-DD' to day of year (doy)
+
+'''
+
+Epilog = '''
+
+:Examples:
+::
+
+    date2doy 2016-01-01
+    1
+
+    Assuming the current year is 2017
+    date2doy 2017-01-01 | doy2date
+    2017-01-01
+
+    cat /tmp/test
+    2017-08-09
+    2017-09-01
+    2017-01-01
+
+    cat /tmp/test | date2doy | doy2date
+    2017-08-09
+    2017-09-01
+    2017-01-01
+
+Keywords: doy, day of year, date, calendar
+
+COPYRIGHT:
+   Copyright 2017, by the California Institute of Technology.
+   ALL RIGHTS RESERVED.
+   United States Government Sponsorship acknowledged.
+'''
+
+# Define author
+__author__   = 'Willy Bertiger'
+
+import sys, argparse # stdin
+from datetime import datetime as datetime
+
+def _getParser():
+    argParser = argparse.ArgumentParser(description= __doc__, epilog=Epilog, 
+                    #formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+                    formatter_class=argparse.RawDescriptionHelpFormatter ) 
+                    #without this won't write verbatim
+
+    argParser.add_argument('date', metavar='YYY-MM-DD', nargs='?', default=None,
+                       help='date or read from stdin')
+
+    return argParser
+
+if __name__ == '__main__':
+    args = _getParser().parse_args()
+
+    if args.date != None:
+        y,m,d = [int(x) for x in args.date.split('-')]
+        #print(y,m,d)
+        d1 = datetime(y,1,1,12,0,0)
+        d = datetime(y,m,d,12,0,0)
+        print((d-d1).days + 1)
+    else:
+        for l in sys.stdin:
+            y,m,d = [int(x) for x in l.split('-')]
+            d1 = datetime(y,1,1,12,0,0)
+            d = datetime(y,m,d,12,0,0)
+            print((d-d1).days + 1)
+        
+
+
